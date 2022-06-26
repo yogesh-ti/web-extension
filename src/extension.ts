@@ -2,6 +2,7 @@
 // Import the module and reference it with the alias vscode in your code below
 import * as vscode from 'vscode';
 import * as child_process from 'child_process';
+import * as fs from 'fs';
 
 export function executeTerminalCommandSync(command: string, options?: any): string {
 	return child_process.execSync(command,{shell: '/bin/bash', encoding: 'utf8', ...options}).toString().trim();
@@ -22,14 +23,13 @@ export function activate(context: vscode.ExtensionContext) {
 		// Display a message box to the user
 		// vscode.env.openExternal(vscode.Uri.parse('https://trilogy.devspaces.com/#https://github.com/yogesh-ti/temp-1'));
 		vscode.window.showInformationMessage('Hello World from test!');
-		try {
-			const res = executeTerminalCommandSync(`gp await-port 1234`, {timeout: 15*1000});
-			console.log(res);
-		} catch (error) {
-			console.log('Error:', error);
+		// console.log(child_process.execSync('pwd'));
+		let repo = await vscode.window.showInputBox();
+		if(repo !== undefined) {
+			vscode.window.showInformationMessage(repo.split('tree/', 2).toString());
 		}
 		
-		vscode.window.showInformationMessage('Killed the given command');
+
 	});
 
 	context.subscriptions.push(disposable);
