@@ -7,6 +7,16 @@ import * as fs from 'fs';
 export function executeTerminalCommandSync(command: string, options?: any): string {
 	return child_process.execSync(command,{shell: '/bin/bash', encoding: 'utf8', ...options}).toString().trim();
 }
+
+function getDefaultBranchFromRepo(repo: string): string {
+  const command = `cd $GITPOD_REPO_ROOT && git remote show ${repo} | grep 'HEAD branch' | cut -d' ' -f5`;
+  console.log(`Command: ${command}`);
+  const branch = executeTerminalCommandSync(command);
+  console.log(`Branch: ${branch}`);
+	console.log(executeTerminalCommandSync('pwd'));
+	console.log(process.cwd());
+  return branch;
+}
 // this method is called when your extension is activated
 // your extension is activated the very first time the command is executed
 export function activate(context: vscode.ExtensionContext) {
@@ -24,11 +34,18 @@ export function activate(context: vscode.ExtensionContext) {
 		// vscode.env.openExternal(vscode.Uri.parse('https://trilogy.devspaces.com/#https://github.com/yogesh-ti/temp-1'));
 		vscode.window.showInformationMessage('Hello World from test!');
 		// console.log(child_process.execSync('pwd'));
-		let repo = await vscode.window.showInputBox();
-		if(repo !== undefined) {
-			vscode.window.showInformationMessage(repo.split('tree/', 2).toString());
+		let repoUrl = await vscode.window.showInputBox();
+		if(repoUrl !== undefined) {
+			const components = repoUrl.split('/tree/');
+			const repo = components[0];
+			components.splice(0,1)
+			let branch = components.join('/tree/');
+			if(branch === '') {
+				branch = getDefaultBranchFromRepo(repo);
+			}
+			console.log(`Repo: ${repo}`)
+			console.log(`Branch: ${branch}`);
 		}
-		
 
 	});
 
