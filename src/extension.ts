@@ -31,7 +31,7 @@ async function repeatedMessages(target: string) {
 		} catch (error) {
 			console.log('repeatedMessages failed request:', error);
 		}
-		await delay(5 * 60 * 1000);
+		await delay(1 * 60 * 1000);
 	}
 }
 // this method is called when your extension is activated
